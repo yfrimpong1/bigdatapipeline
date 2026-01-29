@@ -215,7 +215,9 @@ docker run \
 #######
 docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
 
-docker exec jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
+docker exe
+
+c jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword
 499f137da2b74a9c9dbe5c84b311aec2
 
 #############################
@@ -228,3 +230,26 @@ git push origin main
 
 
 https://github.com/yfrimpong1/bigdatapipeline.git
+
+REPLACED_BY_JENKINS_CREDENTIALS.
+
+################################  Jenkins Pipeline Definition
+
+################################  Execution Flow (What Happens When Jenkins Runs)
+
+Jenkins pulls code from Git
+
+Bash script:
+
+Builds Docker image
+
+Pushes image to ECR
+
+Applies Spark job YAML to EKS
+
+Spark Operator schedules job
+
+Executors process big data
+
+Results written to S3 / data lake
+
