@@ -1,0 +1,3 @@
+aws s3 mb s3://yaw-bdata-raw-bucket --region us-east-1
+aws s3 mb s3://yawbdata-processed-bucket --region us-east-1
+aws s3 mb s3://yawbdata-logs-bucket --region us-east-1
