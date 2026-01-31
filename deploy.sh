@@ -6,7 +6,7 @@ AWS_REGION="us-east-1"
 ACCOUNT_ID="336107977801"
 IMAGE_NAME="bigdata-job"
 IMAGE_URI="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${IMAGE_NAME}:latest"
-// 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
+# 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
 
 TAG=$(git rev-parse --short HEAD)
 
