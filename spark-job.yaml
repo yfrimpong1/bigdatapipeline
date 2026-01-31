@@ -8,6 +8,7 @@ spec:
   pythonVersion: "3"
   mode: cluster
   image: 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
+  imagePullPolicy: Always  #  Ensures EKS pulls your new code
   mainApplicationFile: local:///app/job.py
   sparkVersion: "3.5.0"
   executor:
