@@ -2,19 +2,41 @@ apiVersion: sparkoperator.k8s.io/v1beta2
 kind: SparkApplication
 metadata:
   name: bigdata-job
-  namespace: spark
+  namespace: default
+  labels:
+    spark-app: bigdata-job
 spec:
+  sparkConf:
+    "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "spark.hadoop.fs.s3a.aws.credentials.provider": "com.amazonaws.auth.DefaultAWSCredentialsProviderChain"
+    # ADD THESE TWO LINES TO FIX THE JVM CLASSPATH
+    "spark.driver.extraClassPath": "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
+    "spark.executor.extraClassPath": "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
   type: Python
   pythonVersion: "3"
   mode: cluster
   image: 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
   imagePullPolicy: Always  #  Ensures EKS pulls your new code
+  
   mainApplicationFile: local:///app/job.py
+  # --- ADD THIS SECTION ---
+  deps:
+    jars:
+      - local:///opt/spark/jars/hadoop-aws-3.3.4.jar
+      - local:///opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+  # ------------------------
   sparkVersion: "3.5.0"
   executor:
     cores: 2
     instances: 3
-    memory: 4g
+    memory: 2g
+    env:
+      - name: SPARK_DIST_CLASSPATH
+        value: "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
   driver:
     cores: 1
-    memory: 2g
+    memory: 4g
+    serviceAccount: default # Ensure this matches your RBAC binding
+    env:
+    - name: SPARK_DIST_CLASSPATH
+      value: "/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar"
