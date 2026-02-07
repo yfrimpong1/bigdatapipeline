@@ -1,0 +1,95 @@
+pipeline {
+  /*
+     Infrastructure Setup Pipeline
+     - Manual trigger only (not automatic)
+     - High risk operations (EKS cluster creation/deletion)
+     - Requires approval before execution
+  */
+  agent any
+
+  stages {
+      stage('Verify Environment') {
+          steps {
+              sh '''
+                  echo "=== Verifying Infrastructure Prerequisites ==="
+                  echo "Checking AWS CLI..."
+                  aws --version
+                  
+                  echo "Checking eksctl..."
+                  eksctl version
+                  
+                  echo "Checking helm..."
+                  helm version
+                  
+                  echo "Checking kubectl..."
+                  kubectl version --client
+              '''
+          }
+      }
+
+      stage('Confirm Infrastructure Setup') {
+          steps {
+              script {
+                  timeout(time: 5, unit: 'MINUTES') {
+                      userInput = input(
+                          id: 'InfraSetup',
+                          message: 'Setup EKS Infrastructure?',
+                          parameters: [
+                              booleanParam(
+                                  defaultValue: false,
+                                  description: 'Confirm EKS cluster and Spark Operator installation',
+                                  name: 'PROCEED'
+                              )
+                          ]
+                      )
+                  }
+              }
+          }
+      }
+
+      stage('Setup EKS Infrastructure') {
+          steps {
+              sh '''
+                  echo "=== Starting Infrastructure Setup ==="
+                  chmod +x infrastructure/scripts/setup.sh
+                  
+                  # Source environment config
+                  source config/env.dev.sh
+                  
+                  # Run setup
+                  infrastructure/scripts/setup.sh
+                  
+                  echo "=== Infrastructure Setup Complete ==="
+              '''
+          }
+      }
+
+      stage('Verify Deployment') {
+          steps {
+              sh '''
+                  echo "=== Verifying Infrastructure ==="
+                  
+                  # Check cluster exists
+                  kubectl cluster-info
+                  
+                  # Check Spark Operator installed
+                  kubectl get pods -n spark-operator
+                  
+                  # List nodes
+                  kubectl get nodes
+                  
+                  echo "=== Verification Complete ==="
+              '''
+          }
+      }
+  }
+
+  post {
+      success {
+          echo "✅ Infrastructure setup completed successfully!"
+      }
+      failure {
+          echo "❌ Infrastructure setup failed. Check logs above."
+      }
+  }
+}

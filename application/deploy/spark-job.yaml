@@ -1,0 +1,45 @@
+apiVersion: sparkoperator.k8s.io/v1beta2
+kind: SparkApplication
+metadata:
+  name: bigdata-job
+  namespace: default
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  sparkVersion: "3.5.0"
+
+  image: 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
+  imagePullPolicy: Always
+
+  mainApplicationFile: local:///app/job.py
+
+  sparkConf:
+    spark.hadoop.fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+    spark.hadoop.fs.s3a.aws.credentials.provider: com.amazonaws.auth.DefaultAWSCredentialsProviderChain
+    spark.driver.extraClassPath: /opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+    spark.executor.extraClassPath: /opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+    spark.kubernetes.authenticate.driver.serviceAccountName: spark-sa
+    spark.kubernetes.authenticate.executor.serviceAccountName: spark-sa
+
+
+  deps:
+    jars:
+      - local:///opt/spark/jars/hadoop-aws-3.3.4.jar
+      - local:///opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+
+  driver:
+    cores: 1
+    memory: 2g
+    serviceAccount: spark-sa
+    env:
+      - name: SPARK_DIST_CLASSPATH
+        value: /opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+
+  executor:
+    cores: 2
+    instances: 3
+    memory: 2g
+    env:
+      - name: SPARK_DIST_CLASSPATH
+        value: /opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar

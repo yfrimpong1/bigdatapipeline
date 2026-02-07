@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spark-debug
+  namespace: default
+spec:
+  serviceAccountName: spark-sa
+  restartPolicy: Never
+
+  volumes:
+    - name: etc-passwd
+      emptyDir: {}
+
+  initContainers:
+    - name: fix-user
+      image: busybox:1.36
+      command:
+        - sh
+        - -c
+        - |
+          echo "sparkuser:x:185:0:sparkuser:/tmp:/bin/bash" > /etc/passwd
+          echo "root:x:0:0:root:/root:/bin/bash" >> /etc/passwd
+      volumeMounts:
+        - name: etc-passwd
+          mountPath: /etc
+
+  containers:
+    - name: spark
+      image: 336107977801.dkr.ecr.us-east-1.amazonaws.com/bigdata-job:latest
+      command: ["/bin/bash", "-c", "sleep 3600"]
+      env:
+        - name: HOME
+          value: /tmp
+        - name: SPARK_LOCAL_DIRS
+          value: /tmp
+        - name: SPARK_SUBMIT_OPTS
+          value: "-Divy.home=/tmp/.ivy2 -Dspark.jars.ivy=/tmp/.ivy2"
+      volumeMounts:
+        - name: etc-passwd
+          mountPath: /etc

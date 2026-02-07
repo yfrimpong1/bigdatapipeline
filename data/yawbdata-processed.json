@@ -1,0 +1,27 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowSparkEKSListBucket",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::336107977801:role/eksctl-bigdata-eks-addon-iamserviceaccount-de-Role1-F7Fqm8XX7v9B"
+      },
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::yawbdata-processed"
+    },
+    {
+      "Sid": "AllowSparkEKSObjectRWDelete",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::336107977801:role/eksctl-bigdata-eks-addon-iamserviceaccount-de-Role1-F7Fqm8XX7v9B"
+      },
+      "Action": [
+        "s3:GetObject",
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::yawbdata-processed/output/*"
+    }
+  ]
+}

@@ -3,3 +3,7 @@
 __pycache__/
 *.pem
 eks-key.pem
+
+# Large dependencies
+*.jar
+!.gitkeep
