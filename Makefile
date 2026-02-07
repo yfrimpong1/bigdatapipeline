@@ -52,6 +52,7 @@ docker-build:
 	@source config/env.$(ENVIRONMENT).sh && \
 	docker build -f application/docker/Dockerfile \
 		-t $$IMAGE_NAME:latest \
+		--build-arg SPARK_DIST_CLASSPATH="/opt/spark/jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar" \
 		.
 	@echo "✓ Docker image built: $$IMAGE_NAME:latest"
 

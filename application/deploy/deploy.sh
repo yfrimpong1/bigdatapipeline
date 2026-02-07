@@ -34,7 +34,7 @@ aws ecr get-login-password --region $AWS_REGION \
 --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
 
 echo "Building Docker image..."
-docker build -t $IMAGE_NAME:$TAG ../../application/docker/
+docker build -f application/docker/Dockerfile -t $IMAGE_NAME:$TAG .
 
 echo "Tagging image..."
 docker tag $IMAGE_NAME:$TAG $IMAGE_URI
