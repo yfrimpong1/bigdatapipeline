@@ -173,6 +173,19 @@ kubectl get sparkapplications
 kubectl logs -f bigdata-job-driver
 ```
 
+### 4. Cleanup (Save Costs)
+
+```bash
+# To pause (reduce costs but keep cluster)
+kubectl delete sparkapp spark-job -n spark
+
+# To fully clean up (delete all AWS resources)
+./infrastructure/scripts/cleanup.sh dev
+
+# Cost savings: ~$100-500/month depending on environment
+# For details, see: docs/COST_OPTIMIZATION.md
+```
+
 ## 📚 Documentation
 
 | Document | Purpose |
@@ -180,6 +193,8 @@ kubectl logs -f bigdata-job-driver
 | [application/README.md](application/README.md) | Developer guide - how to develop and test the Spark job |
 | [infrastructure/README.md](infrastructure/README.md) | Infrastructure setup - how to create EKS cluster and S3 buckets |
 | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deployment guide - manual and Jenkins automation options |
+| [docs/MANUAL_BUILD.md](docs/MANUAL_BUILD.md) | Step-by-step manual build and deployment instructions |
+| [docs/COST_OPTIMIZATION.md](docs/COST_OPTIMIZATION.md) | Cost savings strategies - cleanup, scaling, monitoring |
 
 ## 💻 Development
 
